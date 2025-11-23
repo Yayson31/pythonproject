@@ -3,6 +3,7 @@ import random
 def title():
     print("BLACKJACK!")
     print("Blackjack payout is 3:2")
+    print()
 
 def create_deck(deck):
     for suit in ["C", "D", "H", "S"]:
@@ -15,9 +16,8 @@ def shuffle_deck(deck):
     random.shuffle(deck)
 
 
-'''def play_deck():'''
-
-
+'''def play_game(deck):'''
+    
     
 
 
@@ -27,11 +27,33 @@ def main():
     while True:
         print(f"Money: {bank}")
         bet = float(input(f"Bet: "))
+        print()
         
         deck = []
         create_deck(deck)
         shuffle_deck(deck)
-        print(*deck, sep="\n")
+
+        player_card1 = random.choice(deck)
+        cpu_card1 = random.choice(deck)
+        player_card2 = random.choice(deck)
+        cpu_card2 = random.choice(deck)
+
+        print(f"DEALER'S SHOW CARD:\n{cpu_card1}")
+        print()
+        print(f"Your Cards:\n{player_card1}\n{player_card2}")
+        print()
+
+        while True:
+            choice = input("Hit or stand? (hit/stand):").lower()
+            if choice == "hit":
+                player_card3 = random.choice(deck)
+                print(player_card3)
+                continue
+            else:
+                break
+                
+        
+
         
 
 
@@ -39,9 +61,8 @@ def main():
 
 
 
-
-        choice = input("Go again? (y/n): ")
-        if choice == "n":
+        choice3 = input("Go again? (y/n): ")
+        if choice3 == "n":
             print()
             print("Bye")
             break
