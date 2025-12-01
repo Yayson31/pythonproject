@@ -8,11 +8,14 @@ def title():
 
 def create_deck(deck):
     suit = ["C", "D", "H", "S"]
-    rank = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"]
+    rank = {"2":2, "3":3, "4":4, "5":5, "6":6, "7":7, "8":8, "9":9, "10":10, "J":10, "Q":10, "K":10, "A":11}
 
     for s in suit:
-        for r in rank:
-            deck.append(r+s)
+        for r, v in rank.items():
+            card = {"rank":r, "suit":s, "value":v}
+            deck.append(card)
+    return deck
+                
 
 
 
@@ -20,14 +23,16 @@ def shuffle_deck(deck):
     random.shuffle(deck)
 
 
-def card_deal(deck,deck2):
+def initial_deal(deck,deck2):
     card = deck.pop()
     deck2.append(card)
     card = deck.pop()
     deck2.append(card)
     return deck2
 
-'''def play_game(deck):'''
+def check_score(hand):
+    for value in hand:
+        print(value.values())
     
     
 
@@ -47,45 +52,29 @@ def main():
         create_deck(deck)
         shuffle_deck(deck)
 
-        player_hand = card_deal(deck, player_hand)
-        house_hand = card_deal(deck, house_hand)
+        player_hand = initial_deal(deck, player_hand)
+        house_hand = initial_deal(deck, house_hand)
         
-        print(f"DEALER'S SHOW CARD:\n{house_hand[0]}")
+        print("DEALER'S SHOW CARD:")
+        print({house_hand[0]['rank']},{house_hand[0]['suit']})
         print()
-        print(f"Your Cards:\n{player_hand}")
-        print()
+        print("Your Cards:")
+        print({player_hand[0]['rank']},{player_hand[0]['suit']},
+              {player_hand[1]['rank']},{player_hand[1]['suit']})
+        print(f" {len(player_hand)} cards")
+        print(f" {len(deck)} cards")
+        print(check_score(player_hand))
     
-        
-        print(len(deck))
-        print(deck)
-
-        '''player_card = deck.pop()
-        player_card = deck.pop()
-        house_card = deck.pop()
-        player_hand.append(play_card)
-        player_hand.append(play_card)
-        player_hand.append(play_card)'''
-        
-        
-
-        '''cpu_card1 = random.choice(deck)
-        player_card2 = random.choice(deck)
-        cpu_card2 = random.choice(deck)'''
-        
-
-        '''print(f"DEALER'S SHOW CARD:\n{cpu_card1}")
-        print()
-        print(f"Your Cards:\n{player_card1}\n{player_card2}")
-        print()
 
         while True:
             choice = input("Hit or stand? (hit/stand):").lower()
             if choice == "hit":
-                player_card3 = random.choice(deck)
-                print(player_card3)
+                player_hand.append(deck.pop())
+                print(f" {len(player_hand)} cards")
+                print(f" {len(deck)} cards")
                 continue
             else:
-                break'''
+                break
                 
         
 
