@@ -34,10 +34,10 @@ def initial_deal(deck,deck2):
     deck2.append(card)
     return deck2
 
-def check_score(hand):
+def add_score(hand):
     score = 0
     for value in hand:
-        score += value[2]
+        score += value[2]        
     return score
         
     
@@ -65,35 +65,49 @@ def main():
         
         print("DEALER'S SHOW CARD:")
         print(house_hand)
+        house_score = add_score(house_hand)
+        print(f"Current score: {house_score}")
         print()
         print("Your Cards:")
 
         print(player_hand)
-        score = check_score(player_hand)
-        print(f"Current score: {score}")
+        player_score = add_score(player_hand)
+        print(f"Current score: {player_score}")
+        print()
         print(f"{len(player_hand)} cards")
-        print(f"{len(deck)} cards")
+        print(f"{len(deck)} cards left")
         #print(check_score(player_hand))
     
 
         while True:
-            choice = input("Hit or stand? (hit/stand):").lower()
+            choice = input("Hit or stand? (hit/stand): ").lower()
             if choice == "hit":
                 player_hand.append(deck.pop())
-                print(f" {len(player_hand)} cards")
-                print(f" {len(deck)} cards")
+                print(player_hand)
+                player_score = add_score(player_hand)
+                if player_score > 21:
+                    print(f"BUST! Your score: {player_score}")
+                    break
+                elif player_score == 21:
+                    print(f"BLACKJACK!!! Your score: {player_score}")
+                    break
+                elif choice == "stand":
+                    print(player_hand)
+                    player_score = add_score(player_hand)
+                    break
+                else:
+                    print(f"Current score: {player_score}")
+                    print(f" {len(player_hand)} cards")
+                    print(f" {len(deck)} cards")
+                    continue 
+        #house is to hit until > 17
+        while True:
+            if house_score < 17:
+                house_hand.append(deck.pop())
                 continue
-            else:
-                break
+            elif house_score == 21:
+                print(f"BLACKJACK!!! House Wins!")
                 
-        
-
-        
-
-
-
-
-
 
         choice3 = input("Go again? (y/n): ")
         if choice3 == "n":
