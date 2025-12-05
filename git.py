@@ -6,8 +6,8 @@ import time
 
 def title():
     print("BLACKJACK!")
-    
     print("Blackjack payout is 3:2")
+    print("House stands at 16")
     print()
 
 def create_deck(deck):
@@ -37,10 +37,11 @@ def add_score(hand):
         score += value[2]        
     return score
 
+#Need to get ACE handling to work 
 #check_ace for ace handling
 def check_ace(hand):
     for value in hand:
-        if value == 11:
+        if value[2] == 11:
             return True
     return False
     
@@ -53,7 +54,6 @@ def main():
     while True:
         #print(f"Money: {bank}")
         #bet = float(input(f"Bet: "))
-        print()
         
         deck = []
         player_hand = []
@@ -62,15 +62,13 @@ def main():
         create_deck(deck)
         shuffle_deck(deck)
 
-        #initial deal
+        #Initial deal
         player_hand = first_deal(deck, player_hand)
         house_hand = first_deal(deck, house_hand)
         player_hand = first_deal(deck, player_hand)
         house_hand = first_deal(deck, house_hand)
 
-        print(f"{len(player_hand)} cards")
-        print(f"{len(deck)} cards left")
-        print()
+
         print("DEALER'S SHOW CARD:")
         print(house_hand[0])
         house_score = add_score(house_hand)
@@ -79,142 +77,89 @@ def main():
         print(player_hand)
         player_score = add_score(player_hand)
         print(f"Your Score: {player_score}")
-        print()
-        
-        #Choice
-        while True:
-            choice = input("Hit or stand? (hit/stand): ").lower()
-            if choice == "hit":
-                player_hand.append(deck.pop())
-                player_score = add_score(player_hand)
-                print(player_hand)
-                print(player_score)
-                if player_score > 21:
-                    print(f"BUST! Your score: {player_score}")
-                    break
-                elif player_score == 21:
-                    print(f"BLACKJACK!!! Your score: {player_score}")
-                    break
-                continue
-            elif choice == "stand":
-                break
-            
-        #house turn
-        print("House Turn")
-        print()
-        house_score = add_score(house_hand)
-        print("flipping card...")
-        time.sleep(2)
-        print(house_hand)
-        print(f"House Score: {house_score}")
-        time.sleep(2)
-        if house_score < 16:
-            while True:
-                    house_hand.append(deck.pop())
-                    house_score = add_score(house_hand)
-                    print(house_hand)
-                    print(house_score)
-                    if house_score > 21:
-                        print(f"BUST! House score: {house_score}")
-                        print("You Win!")
-                        break
-                    elif house_score == 21:
-                        print(f"BLACKJACK!!! House score: {house_score}")
-                        print("You lose!")
-                        break
-                
-
-        
-    
-            
-        '''#house is to hit until > 1
-            if player_score >= 21:
-                break
-            else:
-                while True:
-                    house_score = add_score(house_hand)
-                    if house_score < 17:
-                        house_hand.append(deck.pop())
-                        continue
-                    elif house_score == 21:
-                        print(f"BLACKJACK!!! House Wins!")
-                        break        
-        
-
-
-
-
-        
-                if player_score > 21:
-                    print(f"BUST! Your score: {player_score}")
-                    break
-                elif player_score == 21:
-                    print(f"BLACKJACK!!! Your score: {player_score}")
-                    break
-            elif choice == "stand":
-                print(player_hand)
-                player_score = add_score(player_hand)
-                break
-            else:
-                print("Invalid choice. hit/stand?")
-
-
-        
-
-
-
-
-
-        
-        
-
-        player_score = add_score(player_hand)
-        print(f"Current score: {house_score}\n")
-        player_score = add_score(player_hand)
+        ace = check_ace(player_hand)
+        print(f"Ace?: {ace}")
         if player_score == 21:
             print(f"BLACKJACK!!! Your score: {player_score}")
-            break
-        
-        ace = check_ace(player_hand)
-        print(ace)
-        print(f"Current score: {player_score}")
+            continue
+
         print()
-        print(f"{len(player_hand)} cards")
-        print(f"{len(deck)} cards left")
         
-    
-        #hit/stand
+        #player choice
         while True:
             choice = input("Hit or stand? (hit/stand): ").lower()
             if choice == "hit":
                 player_hand.append(deck.pop())
-                print(player_hand)
                 player_score = add_score(player_hand)
+                print(player_hand)
+                print(f"Your Score: {player_score}")
                 if player_score > 21:
-                    print(f"BUST! Your score: {player_score}")
+                    print(f"BUST! You Lose.")
+                    print()
                     break
                 elif player_score == 21:
                     print(f"BLACKJACK!!! Your score: {player_score}")
+                    print()
                     break
-            elif choice == "stand":
-                print(player_hand)
-                player_score = add_score(player_hand)
-                break
-            else:
-                print("Invalid choice. hit/stand?")
-            
-        #house is to hit until > 1
-        while True:
-            house_score = add_score(house_hand)
-            if house_score < 17:
-                house_hand.append(deck.pop())
                 continue
-            elif house_score == 21:
-                print(f"BLACKJACK!!! House Wins!")
-                break'''
-                
+            elif choice == "stand":
+                break
 
+            
+        #house turn
+        if player_score < 21:
+            print()
+            print("House Turn")
+            print()
+            print("flipping card...")
+            print()
+            time.sleep(1)
+            print(house_hand)
+            house_score = add_score(house_hand)
+            print(f"House Score: {house_score}")
+
+            #While house has a score less than 16 they must hit   
+            while house_score < 16:
+                print("House draws another card")
+                time.sleep(2)
+                house_hand.append(deck.pop())
+                house_score = add_score(house_hand)
+                print(house_hand)
+                print(f"House Score: {house_score}")
+
+            #final check of house outcome        
+            if house_score > 21:
+                print(f"BUST! House score: {house_score}")
+                print()
+                print("You Win!")
+                
+            elif house_score == 21:
+                print(f"BLACKJACK!!! House score: {house_score}")
+                print()
+                print("House Wins!")
+                
+            elif house_score > player_score:
+                print("House wins!")
+                print()
+                
+            elif house_score < player_score:
+                print("You Win!")
+                print()
+                
+            else:
+                print("PUSH")
+                
+            
+        
+
+                
+        #Continue game?
         choice3 = input("Go again? (y/n): ")
+        if choice3 == "y":
+            print()
+            print("shuffling cards...")
+            print()
+            time.sleep(1)
         if choice3 == "n":
             print()
             print("Bye")
