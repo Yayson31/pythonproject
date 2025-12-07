@@ -33,12 +33,19 @@ def first_deal(deck,hand):
 
 def add_score(hand):
     score = 0
+    ace = 0
+    
     for value in hand:
-        score += value[2]        
+        score += value[2]
+        if value[2] == 11:
+            ace += 1
+    #ace handling 
+    if score > 21 and ace > 0:
+        score -= 10
+        ace -= 1
     return score
 
-#Need to get ACE handling to work 
-#check_ace for ace handling
+#to confirm if ace is in hand
 def check_ace(hand):
     for value in hand:
         if value[2] == 11:
@@ -93,6 +100,8 @@ def main():
                 player_score = add_score(player_hand)
                 print(player_hand)
                 print(f"Your Score: {player_score}")
+                ace = check_ace(player_hand)
+                print(f"Ace?: {ace}")
                 if player_score > 21:
                     print(f"BUST! You Lose.")
                     print()
