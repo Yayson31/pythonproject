@@ -9,6 +9,8 @@ def title():
     print("BLACKJACK!")
     print("Blackjack payout is 3:2")
     print("House stands at 17")
+    print("Cards read as follow: Rank, suit, value")
+    print("C = Clubs, D = Diamonds, H = Hearts, S = Spades")
     print()
 
 #create deck
@@ -147,8 +149,7 @@ def main():
             print(f"BLACKJACK!!! Your score: {player_score}")
             wallet = db.add_money(wallet, bet * 2.5)
             print()
-            continue
-        print()
+            
         
         #player choice
         while True:
