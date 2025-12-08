@@ -2,7 +2,27 @@ import random
 import time
 
 
-#need to create csv for wallet  
+#Money system 
+
+filename = "money.txt"
+
+def load_wallet(filename = "money.txt"):
+    try:
+        with open(filename, "r") as file:
+            return float(file.read())
+    except FileNotFoundError:
+        print("File not found... Creating new wallet")
+        return 0.0
+    except ValueError:
+        return 0.0
+    
+
+def save_wallet(balance, filename = "money.txt"):
+    with open(filename, "w") as file:
+        file.write(str(balance))
+
+
+
 
 def title():
     print("BLACKJACK!")
@@ -40,7 +60,7 @@ def add_score(hand):
         if value[2] == 11:
             ace += 1
     #ace handling 
-    if score > 21 and ace > 0:
+    while score > 21 and ace > 0:
         score -= 10
         ace -= 1
     return score
@@ -59,8 +79,13 @@ def main():
     title()
     
     while True:
-        #print(f"Money: {bank}")
-        #bet = float(input(f"Bet: "))
+        #Test wallet
+        wallet = load_wallet()
+        save_wallet(75)
+        print(f"Your current balance: ${wallet:.2f}")
+
+        #make bet
+        
         
         deck = []
         player_hand = []
@@ -127,8 +152,8 @@ def main():
             house_score = add_score(house_hand)
             print(f"House Score: {house_score}")
 
-            #While house has a score less than 16 they must hit   
-            while house_score < 16:
+            #While house has a score less than 17 they must hit   
+            while house_score < 17:
                 print("House draws another card")
                 time.sleep(2)
                 house_hand.append(deck.pop())
