@@ -3,14 +3,15 @@ import time
 import db
 
 
-#Money system 
-
+#Money system in db module
+#title
 def title():
     print("BLACKJACK!")
     print("Blackjack payout is 3:2")
-    print("House stands at 16")
+    print("House stands at 17")
     print()
 
+#create deck
 def create_deck(deck):
     suit = ["C", "D", "H", "S"]
     rank = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"]
@@ -22,23 +23,23 @@ def create_deck(deck):
             deck.append(card)
     return deck
             
-
+#shuffle deck
 def shuffle_deck(deck):
     random.shuffle(deck)
 
-
+#first deal 
 def first_deal(deck,hand):
     card = deck.pop()
     hand.append(card)
     return hand
 
-def add_score(hand):
+#split add score function for each hand
+def add_player_score(hand):
     score = 0
     ace = 0
     
     for value in hand:
         if value[2] == 11:
-            # Check if 11 would bust
             if score + 11 > 21:
                 score += 1
             else:
@@ -51,10 +52,15 @@ def add_score(hand):
             ace += 1
         else:
             score += value[2]
+    #ace handling
+    while score > 21 and ace > 0:
+        score -= 10
+        ace -=1
     
     return score
 
-'''def add_score(hand):
+
+def add_house_score(hand):
     score = 0
     ace = 0
     
@@ -66,7 +72,8 @@ def add_score(hand):
     while score > 21 and ace > 0:
         score -= 10
         ace -= 1
-    return score'''
+    return score
+
 
 #to confirm if ace is in hand
 def check_ace(hand):
@@ -111,7 +118,7 @@ def main():
         print(f"Bet placed: ${bet:.2f}.\nRemaining balance: ${wallet:.2f}")
         print()
         
-        
+        #create deck and hands and shuffle deck
         deck = []
         player_hand = []
         house_hand = []
@@ -128,11 +135,11 @@ def main():
 
         print("DEALER'S SHOW CARD:")
         print(house_hand[0])
-        house_score = add_score(house_hand)
+        house_score = add_house_score(house_hand)
         print()
         print("Your Cards:")
         print(player_hand)
-        player_score = add_score(player_hand)
+        player_score = add_player_score(player_hand)
         print(f"Your Score: {player_score}")
         ace = check_ace(player_hand)
         print(f"Ace?: {ace}")
@@ -141,7 +148,6 @@ def main():
             wallet = db.add_money(wallet, bet * 2.5)
             print()
             continue
-
         print()
         
         #player choice
@@ -149,7 +155,7 @@ def main():
             choice = input("Hit or stand? (hit/stand): ").lower()
             if choice == "hit":
                 player_hand.append(deck.pop())
-                player_score = add_score(player_hand)
+                player_score = add_player_score(player_hand)
                 print(player_hand)
                 print(f"Your Score: {player_score}")
                 ace = check_ace(player_hand)
@@ -163,6 +169,7 @@ def main():
                 elif player_score == 21:
                     print(f"BLACKJACK!!! Your score: {player_score}")
                     wallet = db.add_money(wallet, bet * 2.5)
+                    print(f"Balance: ${wallet:.2f}")
                     print()
                     break
                 continue
@@ -179,7 +186,7 @@ def main():
             print()
             time.sleep(1)
             print(house_hand)
-            house_score = add_score(house_hand)
+            house_score = add_house_score(house_hand)
             print(f"House Score: {house_score}")
 
             #While house has a score less than 17 they must hit   
@@ -187,7 +194,7 @@ def main():
                 print("House draws another card")
                 time.sleep(2)
                 house_hand.append(deck.pop())
-                house_score = add_score(house_hand)
+                house_score = add_house_score(house_hand)
                 print(house_hand)
                 print(f"House Score: {house_score}")
 
@@ -198,32 +205,27 @@ def main():
                 print("You Win!")
                 wallet = db.add_money(wallet, bet * 2)
                 print(f"Balance: ${wallet:.2f}")
-                
             elif house_score == 21:
                 print(f"BLACKJACK!!! House score: {house_score}")
                 print()
                 print("House Wins!")
                 print()
                 print(f"Remaining balance: ${wallet:.2f}")
-                
-                
             elif house_score > player_score:
                 print("House wins!")
                 print()
                 print(f"Remaining balance: ${wallet:.2f}")
-                
             elif house_score < player_score:
                 print("You Win!")
                 wallet = db.add_money(wallet, bet * 2)
                 print(f"Balance: ${wallet:.2f}")
                 print()
-                
             else:
                 print("PUSH")
+                print()
+                wallet = db.add_money(wallet, bet)
+                print(f"Balance: ${wallet:.2f}")
                 
-            
-        
-
                 
         #Continue game?
         choice3 = input("Go again? (y/n): ")
