@@ -22,6 +22,16 @@ def save_wallet(balance, filename = "money.txt"):
         file.write(str(balance))
 
 
+def add_money(balance, amount):
+    balance += amount
+    save_wallet(amount)
+    return balance
+
+def bet_money(balance, bet):
+    balance -= bet
+    save_wallet(balance)
+    return balance
+
 
 
 def title():
@@ -79,12 +89,33 @@ def main():
     title()
     
     while True:
-        #Test wallet
+        #load wallet
         wallet = load_wallet()
-        save_wallet(75)
         print(f"Your current balance: ${wallet:.2f}")
 
-        #make bet
+        # Ask for bet
+        while True:
+            try:
+                bet = float(input("Enter your bet: "))
+                if bet <= 0:
+                    print("Bet must be greater than 0.")
+                elif bet > wallet:
+                    print("Not enough funds!")
+                    option = input("Buy $100 worth of chips? (y/n): ")
+                    if option == "y":
+                        chips = 100.00
+                        wallet = add_money(wallet, chips)
+                        print(f"Your current balance: ${wallet:.2f}")
+                elif bet < 5 or bet > 1000:
+                    print("Min bet is $5. Max bet is $1000.")
+                else:
+                    break
+            except ValueError:
+                print("Please enter a valid number.")
+        
+        # Deduct bet
+        wallet = bet_money(wallet, bet)
+        print(f"Bet placed: ${bet:.2f}. Remaining balance: ${wallet:.2f}")
         
         
         deck = []
@@ -133,6 +164,7 @@ def main():
                     break
                 elif player_score == 21:
                     print(f"BLACKJACK!!! Your score: {player_score}")
+                    wallet = add_money(wallet, bet * 2.5)
                     print()
                     break
                 continue
@@ -166,18 +198,26 @@ def main():
                 print(f"BUST! House score: {house_score}")
                 print()
                 print("You Win!")
+                wallet = add_money(wallet, bet * 2)
+                print(f"Balance: ${wallet:.2f}")
                 
             elif house_score == 21:
                 print(f"BLACKJACK!!! House score: {house_score}")
                 print()
                 print("House Wins!")
+                print()
+                print(f"Remaining balance: ${wallet:.2f}")
+                
                 
             elif house_score > player_score:
                 print("House wins!")
                 print()
+                print(f"Remaining balance: ${wallet:.2f}")
                 
             elif house_score < player_score:
                 print("You Win!")
+                wallet = add_money(wallet, bet * 2)
+                print(f"Balance: ${wallet:.2f}")
                 print()
                 
             else:
