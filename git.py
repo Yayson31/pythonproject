@@ -1,5 +1,6 @@
 import random
 import time
+import db
 
 
 #Money system 
@@ -66,6 +67,28 @@ def add_score(hand):
     ace = 0
     
     for value in hand:
+        if value[2] == 11:
+            # Check if 11 would bust
+            if score + 11 > 21:
+                score += 1
+            else:
+                # Give player the choice
+                choice = input("You drew an Ace! Count as 1 or 11? ")
+                if choice.strip() == "11":
+                    score += 11
+                else:
+                    score += 1
+            ace += 1
+        else:
+            score += value[2]
+    
+    return score
+
+'''def add_score(hand):
+    score = 0
+    ace = 0
+    
+    for value in hand:
         score += value[2]
         if value[2] == 11:
             ace += 1
@@ -73,7 +96,7 @@ def add_score(hand):
     while score > 21 and ace > 0:
         score -= 10
         ace -= 1
-    return score
+    return score'''
 
 #to confirm if ace is in hand
 def check_ace(hand):
@@ -90,7 +113,7 @@ def main():
     
     while True:
         #load wallet
-        wallet = load_wallet()
+        wallet = db.load_wallet()
         print(f"Your current balance: ${wallet:.2f}")
 
         # Ask for bet
@@ -104,7 +127,7 @@ def main():
                     option = input("Buy $100 worth of chips? (y/n): ")
                     if option == "y":
                         chips = 100.00
-                        wallet = add_money(wallet, chips)
+                        wallet = db.add_money(wallet, chips)
                         print(f"Your current balance: ${wallet:.2f}")
                 elif bet < 5 or bet > 1000:
                     print("Min bet is $5. Max bet is $1000.")
@@ -114,8 +137,9 @@ def main():
                 print("Please enter a valid number.")
         
         # Deduct bet
-        wallet = bet_money(wallet, bet)
-        print(f"Bet placed: ${bet:.2f}. Remaining balance: ${wallet:.2f}")
+        wallet = db.bet_money(wallet, bet)
+        print(f"Bet placed: ${bet:.2f}.\nRemaining balance: ${wallet:.2f}")
+        print()
         
         
         deck = []
@@ -144,6 +168,8 @@ def main():
         print(f"Ace?: {ace}")
         if player_score == 21:
             print(f"BLACKJACK!!! Your score: {player_score}")
+            wallet = db.add_money(wallet, bet * 2.5)
+            print()
             continue
 
         print()
@@ -164,7 +190,7 @@ def main():
                     break
                 elif player_score == 21:
                     print(f"BLACKJACK!!! Your score: {player_score}")
-                    wallet = add_money(wallet, bet * 2.5)
+                    wallet = db.add_money(wallet, bet * 2.5)
                     print()
                     break
                 continue
@@ -198,7 +224,7 @@ def main():
                 print(f"BUST! House score: {house_score}")
                 print()
                 print("You Win!")
-                wallet = add_money(wallet, bet * 2)
+                wallet = db.add_money(wallet, bet * 2)
                 print(f"Balance: ${wallet:.2f}")
                 
             elif house_score == 21:
@@ -216,7 +242,7 @@ def main():
                 
             elif house_score < player_score:
                 print("You Win!")
-                wallet = add_money(wallet, bet * 2)
+                wallet = db.add_money(wallet, bet * 2)
                 print(f"Balance: ${wallet:.2f}")
                 print()
                 
